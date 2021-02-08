@@ -82,11 +82,57 @@ pip install requests
 
 （２）bs4
 
+安装：
+
+```
+pip install bs4
+pip install lxml
+```
+
+
+
+**解析原理：**
+
+a 实例化一个beautifulSoup对象，并且把页面数据加载到该对象当中。
+
+from bs4 import BeautifulSoup
+
+对象实例化：
+
+​		fp = open('.test.html','r',encoding='utf-8')
+
+​		soup = BeautifulSoup(fp,'lxml')
+
+​		
+
+​		page_text = response.text
+
+b 通过调用beautifulSoup对象中相关的属性和方法进行标签定位和数据提取。
+
+**提供数据解析的方法：**
+
+1）soup.tapName (这里的tagName就是html中第一个tagName对应的标签内容)
+
+２）soup.find(tagName) 　等同于　1)
+
+soup.find(tagName,class=className)：找出第一个带有className属性的tagName标签
+
+3）soup.find_all(tagName)
+
+4）soup.select(’某种选择器，可以是id, class, 标签...‘)，返回的是一个符合选择器要求的列表
+
+soup.select('.tang > url > li > a')	：　层级选择器，选择tang标签下面的url再下面的a标签
+
+soup.select('.tang > url a')　：　空格跳过li层级，选择a层级
+
+５）获取标签之间的文本数据：
+
+​	soup.a.text/string/get_text()：获取a标签的属性
+
+​	text/get_text()：获取该标签下面的所有文本内容
+
+​	string：只获取该标签的直系内容
+
+6）
+
 （３）xpath
-
-
-
-
-
-
-
