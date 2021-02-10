@@ -78,9 +78,9 @@ pip install requests
 
 步骤２：对标签或者标签对应的属性中存储的数据值进行提取（解析）
 
-（１）正则表达式
+##### （１）正则表达式
 
-（２）bs4
+##### （２）bs4
 
 安装：
 
@@ -133,6 +133,86 @@ soup.select('.tang > url a')　：　空格跳过li层级，选择a层级
 
 ​	string：只获取该标签的直系内容
 
-6）
 
-（３）xpath
+
+##### （３）xpath
+
+**xpath：**最常用，最方便的一种解析方法，同时通用性也很强，多种语言都可以适用。
+
+**xpath安装:**
+
+```
+pip instal lxml
+```
+
+
+
+**xpath的解析原理：**
+
+1)　实例化一个etree对象，同时把从互联网获取的数据加载到etree对象当中。
+
+```python
+from lxml import etree
+object = etree.parse(filepath) # 从本地html文件进行加载
+object = etree.HTML(page_text) # 从互联网获取的源码数据进行加载
+```
+
+2)　调用etree对象的xpath方法，结合xpath表达式实现标签的定位和内容的捕获。
+
+```python
+object.xpath('xpath表达式')	# 模板
+object.xpath('/html/head/title')	# 根标签定位：从根标签节点路径加载，这里的/html表示html是跟标签，如果有多个符合该表达式的标签，会用列表进行存储
+object.xpath('//div')	#　//　多个层级定位：表示div标签前面有多个层级
+object.xpath('//div[@class="song"]')	# 属性定位：表示找到多个div后，选择某个div属性值是song的div标签数据　//tagName[@class='song']
+object.xpath('//div[@class="song"]/p[3]')	# 索引定位：获取到属性值为song的div标签下面的p标签的第三个标签的数据
+object.xpath('//div[@class="song"]/p[3]/text()')	# /text()，取直系标签文本内容
+object.xpath('//div[@class="song"]/p[3]//text()')	# //text()，取该标签下面的所有文本内容，包括所有子标签的文本内容
+object.xpath('//div[@class="song"]/p[3]/＠attrName')		#　取属性值
+```
+
+www.aqistudy.cn/historydata/
+
+
+
+#### 3、验证码识别
+
+（１）为啥需要验证码识别？
+
+在登录的时候，很多时候网站为了反爬虫，设置了验证码。我们在设计爬虫的时候，如果遇到需要验证码才能登录的网站就需要对验证码进行识别，跳过网站验证获取数据。
+
+（２）如何识别验证码
+
+人工识别：不推荐
+
+第三方线上平台：推荐
+
+（３）第三方验证码识别线上平台
+
+云打码平台
+
+
+
+#### 4、模拟登陆
+
+（１）为啥要登录？
+
+a. 有的时候需要获取登录用户的个人信息
+
+b. 有些页面只有登录之后，才能进行获取相关的信息
+
+（２）手工登录的流程
+
+a. 点击登录按钮之后会发起一个post请求
+
+b. post请求会携带在登录界面用户录入的相关登录信息（用户名、密码、验证码等等）
+
+（３）编程流程
+
+a. 如果有验证码的话，获取验证码对应的文字数据
+
+b. 发送post请求（携带用户名、密码、验证码...）
+
+ｃ、对响应数据进行持久化存储
+
+
+

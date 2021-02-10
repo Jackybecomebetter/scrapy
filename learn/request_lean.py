@@ -131,28 +131,68 @@ if __name__ == "__main__":
     #             fp.write(image_content)
     #         image_num = image_num + 1
 
-    # bs4案例　：　爬取三国演义中所有的章节标题和章节内容
-    # 数据解析主要通过两个步骤：
-    # 步骤１：进行指定标签的定位。
-    # 步骤２：对标签或者标签对应的属性中存储的数据值进行提取（解析）
-    from bs4 import BeautifulSoup
-    url = "https://www.shicimingju.com/book/sanguoyanyi.html"
+    # # bs4案例　：　爬取三国演义中所有的章节标题和章节内容
+    # # 数据解析主要通过两个步骤：
+    # # 步骤１：进行指定标签的定位。
+    # # 步骤２：对标签或者标签对应的属性中存储的数据值进行提取（解析）
+    # from bs4 import BeautifulSoup
+    # url = "https://www.shicimingju.com/book/sanguoyanyi.html"
+    # header = {
+    #     "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36"
+    # }
+    # response = requests.get(url=url,headers=header).content.decode('utf-8')
+    # soup = BeautifulSoup(response,'lxml')
+    # zhangjie_list = soup.select('.book-mulu > ul > li')
+    # fp = open('./sanguoyanyi.txt','w',encoding=m'utf-8')
+    # for zhangjie in zhangjie_list:
+    #     # <a href="/book/sanguoyanyi/2.html">第二回·张翼德怒鞭督邮    何国舅谋诛宦竖</a>
+    #     # 第二回·张翼德怒鞭督邮    何国舅谋诛宦竖 , 这是是标签内容，没有等于号
+    #     # href="/book/sanguoyanyi/2.html ,　这是标签属性，有等于号
+    #     title = zhangjie.a.string   # 标签内容  
+    #     zhangjie_url = "https://www.shicimingju.com" + zhangjie.a['href']   # 标签属性
+
+    #     detail_text = requests.get(url=zhangjie_url,headers=header).content.decode('utf-8')
+    #     detail_soup = BeautifulSoup(detail_text,'lxml')
+    #     detail_content = detail_soup.find('div',class_ = 'chapter_content').text
+    #     fp.write(title + '\n' + detail_content + '\n')
+    #     print(title,"爬取成功")
+
+    # # xpath案例：　爬取58同城的二手房信息
+    # from lxml import etree
+    # url = "https://gz.58.com/ershoufang/"
+    # header = {
+    #     "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36"
+    # }
+    # page_text = requests.get(url=url,headers=header).text
+
+    # obj = etree.HTML(page_text) 
+    # div_list = obj.xpath('//div[@tongji_tag="fcpc_ersflist_gzcount"]')
+    # fp = open('./58.txt','w',encoding='utf-8')
+    # for div in div_list:
+    #     detail = div.xpath('./a/div[2]/div/div/h3/@title')[0]
+    #     name = div.xpath('./a/div[2]//p[@class="property-content-info-comm-name"]/text()')[0]
+    #     price0 = div.xpath('./a/div[2]//span[@class="property-price-total-num"]/text()')[0]
+    #     price1 = div.xpath('./a/div[2]//span[@class="property-price-total-text"]/text()')[0]
+    #     fp.write(name+"\t"+price0+price1+'\t'+detail+"\n")
+    # fp.close()
+
+    # 解析全国所有城市
+    from lxml import etree
+    url = "https://www.aqistudy.cn/historydata/"
     header = {
         "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36"
     }
-    response = requests.get(url=url,headers=header).content.decode('utf-8')
-    soup = BeautifulSoup(response,'lxml')
-    zhangjie_list = soup.select('.book-mulu > ul > li')
-    fp = open('./sanguoyanyi.txt','w',encoding=m'utf-8')
-    for zhangjie in zhangjie_list:
-        # <a href="/book/sanguoyanyi/2.html">第二回·张翼德怒鞭督邮    何国舅谋诛宦竖</a>
-        # 第二回·张翼德怒鞭督邮    何国舅谋诛宦竖 , 这是是标签内容，没有等于号
-        # href="/book/sanguoyanyi/2.html ,　这是标签属性，有等于号
-        title = zhangjie.a.string   # 标签内容  
-        zhangjie_url = "https://www.shicimingju.com" + zhangjie.a['href']   # 标签属性
-
-        detail_text = requests.get(url=zhangjie_url,headers=header).content.decode('utf-8')
-        detail_soup = BeautifulSoup(detail_text,'lxml')
-        detail_content = detail_soup.find('div',class_ = 'chapter_content').text
-        fp.write(title + '\n' + detail_content + '\n')
-        print(title,"爬取成功")
+    page_text = requests.get(url=url,headers=header).text
+    # print(page_text)
+    obj = etree.HTML(page_text)
+    ul_list = obj.xpath('//div[@class="all"]/div[@class="bottom"]/ul')
+    fp = open('./city.txt','w',encoding='utf-8')
+    for ul in ul_list:
+        city_list = ul.xpath('./div[2]/li')
+        tag = ul.xpath('./div[1]/b/text()')
+        fp.write(tag[0]+'\n')
+        for city in city_list:
+            name = city.xpath('./a/text()')
+            fp.write(name[0]+'\t')
+        fp.write('\n\n')
+    fp.close()
